@@ -40,7 +40,7 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
             {
                 if (attributeList.Attributes.Any(x => x.Name.ToFullString().Contains("ProtoContract")
                 && _semantics.GetSymbolInfo(x).Symbol is IMethodSymbol symbol
-                && symbol.ContainingType.ToString() == "Protobuf.ProtoContractAttribute"))
+                && symbol.ContainingType.ToString() == "ProtoBuf.ProtoContractAttribute"))
                 {
                     _collectingProperties = true;
                     _currentClass = node;

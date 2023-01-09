@@ -40,7 +40,7 @@ public class ProtoClassGenerator
                   .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.IdentifierName(shadow.Property.Identifier.Text)))
                   .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
-                var setter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                var setter = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
                   .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.AssignmentExpression(
                     SyntaxKind.SimpleAssignmentExpression,
                     SyntaxFactory.IdentifierName(shadow.Property.Identifier.Text),
@@ -51,7 +51,7 @@ public class ProtoClassGenerator
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList(
                             SyntaxFactory.Attribute(
-                                SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName("Protobuf"), SyntaxFactory.IdentifierName("ProtoMember")))
+                                SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName("ProtoBuf"), SyntaxFactory.IdentifierName("ProtoMember")))
                             .WithArgumentList(
                                 SyntaxFactory.AttributeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList(

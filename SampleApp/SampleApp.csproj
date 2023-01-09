@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProtobufSourceGenerator\ProtobufSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <Analyzer  Include="..\ProtobufSourceGenerator\ProtobufSourceGenerator.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33209.295
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufSourceGenerator", "ProtobufSourceGenerator\ProtobufSourceGenerator.csproj", "{6AEBF24B-6F08-431F-AFDE-A1BF1E47DF2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtobufSourceGenerator", "ProtobufSourceGenerator\ProtobufSourceGenerator.csproj", "{6AEBF24B-6F08-431F-AFDE-A1BF1E47DF2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "SampleApp\SampleApp.csproj", "{6154F071-AE91-413F-B0BE-3E8E3BFDCF1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp", "SampleApp\SampleApp.csproj", "{6154F071-AE91-413F-B0BE-3E8E3BFDCF1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufSourceGenerator.Tests", "ProtobufSourceGenerator.Tests\ProtobufSourceGenerator.Tests.csproj", "{B01D3533-FEC1-4797-9148-90CE4E91DE5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{6154F071-AE91-413F-B0BE-3E8E3BFDCF1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6154F071-AE91-413F-B0BE-3E8E3BFDCF1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6154F071-AE91-413F-B0BE-3E8E3BFDCF1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B01D3533-FEC1-4797-9148-90CE4E91DE5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01D3533-FEC1-4797-9148-90CE4E91DE5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B01D3533-FEC1-4797-9148-90CE4E91DE5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B01D3533-FEC1-4797-9148-90CE4E91DE5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
