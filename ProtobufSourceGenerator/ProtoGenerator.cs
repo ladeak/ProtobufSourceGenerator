@@ -19,7 +19,8 @@ public class ProtoGenerator : ISourceGenerator
 
         var classGenerator = new ProtoClassGenerator();
         foreach (var (fileName, source) in classGenerator.CreateClasses(propertyShadowInfos))
-            context.AddSource($"Proto{fileName}.g.cs", source);
+            if (source is { Length: > 0 })
+                context.AddSource($"Proto{fileName}.g.cs", source);
     }
 
     public void Initialize(GeneratorInitializationContext context)

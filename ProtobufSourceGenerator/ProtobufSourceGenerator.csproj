@@ -4,6 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <IsPackable>true</IsPackable>
+    <PackageId>LaDeak.ProtobufSourceGenerator</PackageId>
+    <Description>A source generator that generates helper classes with properties attributes with ProtoMember attribute.</Description>
   </PropertyGroup>
 
   <ItemGroup>

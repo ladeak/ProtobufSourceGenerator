@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtobufSourceGenerator;
 
@@ -67,6 +68,23 @@ public class ProtoClassGenerator
                 classSyntax = classSyntax.WithMembers(classSyntax.Members.Add(newProperty));
             }
         }
+
+        // For all parent types, we wrap the inner type
+        while (classInfo.ContainingSymbol is INamedTypeSymbol parentClass)
+        {
+            var parentClassSyntax = SyntaxFactory.ClassDeclaration(parentClass.Name)
+                .WithModifiers(
+                SyntaxFactory.TokenList(
+                    new[] {
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                    SyntaxFactory.Token(SyntaxKind.PartialKeyword)
+           }));
+
+            parentClassSyntax = parentClassSyntax.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(classSyntax));
+            classSyntax = parentClassSyntax;
+            classInfo = parentClass;
+        }
+
         sb.Append(classSyntax.NormalizeWhitespace().ToFullString());
         return sb.ToString();
     }

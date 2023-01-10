@@ -10,8 +10,8 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
 {
     private readonly SemanticModel _semantics;
     private List<PropertyInfo> _properties;
-    private bool _collectingProperties;
-    private ClassDeclarationSyntax _currentClass;
+    private Stack<bool> _collectingProperties;
+    private Stack<ClassDeclarationSyntax> _currentClass;
 
     public ProtoSyntaxTreeWalker(SemanticModel model)
     {
@@ -21,8 +21,8 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
     public IEnumerable<PropertyInfo> Analyze(SyntaxNode root)
     {
         _properties = new();
-        _collectingProperties = false;
-        _currentClass = null;
+        _currentClass = new();
+        _collectingProperties = new();
         Visit(root);
         var result = _properties;
         _properties = null;
@@ -30,10 +30,14 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
         return result;
     }
 
+    public override void VisitRecordDeclaration(RecordDeclarationSyntax node)
+    {
+        base.VisitRecordDeclaration(node);
+    }
+
     public override void VisitClassDeclaration(ClassDeclarationSyntax node)
     {
-        _collectingProperties = false;
-        _currentClass = null;
+        var collectingProperties = false;
         if (node != null && node.Modifiers.Any(x => x.IsKeyword() && x.IsKind(SyntaxKind.PartialKeyword)))
         {
             foreach (var attributeList in node.AttributeLists)
@@ -42,23 +46,27 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
                 && _semantics.GetSymbolInfo(x).Symbol is IMethodSymbol symbol
                 && symbol.ContainingType.ToString() == "ProtoBuf.ProtoContractAttribute"))
                 {
-                    _collectingProperties = true;
-                    _currentClass = node;
+                    collectingProperties = true;
                 }
             }
         }
+        _collectingProperties.Push(collectingProperties);
+        _currentClass.Push(node);
         base.VisitClassDeclaration(node);
+        _collectingProperties.Pop();
+        _currentClass.Pop();
     }
 
     public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
     {
-        if (_collectingProperties && _currentClass != null)
+        if (_collectingProperties.Count > 0 && _collectingProperties.All(x => x == true) && _currentClass.Count > 0)
         {
-            var typeSymbol = _semantics.GetDeclaredSymbol(_currentClass);
+            var currentClass = _currentClass.Peek();
+            var typeSymbol = _semantics.GetDeclaredSymbol(currentClass);
             var propertySymbol = _semantics.GetDeclaredSymbol(node);
             if (propertySymbol.GetMethod != null && !propertySymbol.GetMethod.IsReadOnly
             && propertySymbol.SetMethod != null && !propertySymbol.SetMethod.IsReadOnly)
-                _properties.Add(new PropertyInfo(_currentClass, node, typeSymbol, propertySymbol));
+                _properties.Add(new PropertyInfo(currentClass, node, typeSymbol, propertySymbol));
         }
         base.VisitPropertyDeclaration(node);
     }

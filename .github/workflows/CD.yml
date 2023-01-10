@@ -1,0 +1,29 @@
+name: Build and Deploy
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CONFIGURATION: Release
+  DOTNET_VERSION: 7.0.x
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+    - name: Build
+      run: dotnet build ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
+    - name: Pack
+      run: dotnet pack ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
+    - name: Push Nuget
+      run: dotnet nuget push ProtobufSourceGenerator/nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $nuget_api_key --skip-duplicate
+      env:
+        nuget_api_key: ${{ secrets.NUGET_API_KEY }}
