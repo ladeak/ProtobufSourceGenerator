@@ -34,7 +34,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
@@ -76,7 +76,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
@@ -118,7 +118,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
@@ -173,8 +173,8 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoSomeEntity.g.cs", SourceText.From(generatedSomeEntity, Encoding.UTF8, SourceHashAlgorithm.Sha1)),
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generatedEntity, Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoSomeEntity.g.cs", SourceText.From(generatedSomeEntity.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generatedEntity.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
