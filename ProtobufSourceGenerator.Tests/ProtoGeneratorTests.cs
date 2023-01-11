@@ -1,14 +1,13 @@
-using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using System.Text;
+using Microsoft.CodeAnalysis.Text;
 using VerifyCS = ProtobufSourceGenerator.Tests.CSharpSourceGeneratorVerifier<ProtobufSourceGenerator.ProtoGenerator>;
-using ProtoBuf;
 
 namespace ProtobufSourceGenerator.Tests;
 
 public class ProtoGeneratorTests
 {
+    private const string CRLF = "\r\n";
+
     [Fact]
     public async Task SinglePropertyTest()
     {
@@ -21,7 +20,6 @@ public partial class Entity
 }";
 
         var generated = @"namespace Test;
-
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
@@ -34,15 +32,10 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
-
-        test.TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
-        test.TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
-
-
         await test.RunAsync();
     }
 
@@ -63,7 +56,6 @@ public record SomeEntity
 }";
 
         var generated = @"namespace Test;
-
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
@@ -76,15 +68,10 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
-
-        test.TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
-        test.TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
-
-
         await test.RunAsync();
     }
 
@@ -105,7 +92,6 @@ public partial class Entity
 }";
 
         var generated = @"namespace Test;
-
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
@@ -118,15 +104,10 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
-
-        test.TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
-        test.TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
-
-
         await test.RunAsync();
     }
 
@@ -148,7 +129,6 @@ public partial class Entity
 }";
 
         var generatedEntity = @"namespace Test;
-
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
@@ -156,7 +136,6 @@ public partial class Entity
 }";
 
         var generatedSomeEntity = @"namespace Test;
-
 public partial class Entity
 {
     public partial class SomeEntity
@@ -173,15 +152,11 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(ProtoGenerator), "ProtoSomeEntity.g.cs", SourceText.From(generatedSomeEntity.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
-                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generatedEntity.ReplaceLineEndings(), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoSomeEntity.g.cs", SourceText.From(generatedSomeEntity.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generatedEntity.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };
-
-        test.TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
-        test.TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
-
 
         await test.RunAsync();
     }
@@ -212,10 +187,6 @@ public class Entity
                 },
             },
         };
-
-        test.TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
-        test.TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
-
 
         await test.RunAsync();
     }

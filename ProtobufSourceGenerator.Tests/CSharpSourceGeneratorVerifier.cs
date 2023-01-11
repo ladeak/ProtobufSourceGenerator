@@ -2,7 +2,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using ProtoBuf;
 
 namespace ProtobufSourceGenerator.Tests;
 
@@ -12,6 +14,8 @@ public static class CSharpSourceGeneratorVerifier<TSourceGenerator> where TSourc
     {
         public Test()
         {
+            TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
+            TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
         }
 
         protected override CompilationOptions CreateCompilationOptions()

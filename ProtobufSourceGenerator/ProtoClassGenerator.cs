@@ -15,10 +15,6 @@ public class ProtoClassGenerator
     {
         var classInfo = propertyShadows.First().TypeSymbol;
 
-        StringBuilder sb = new();
-        sb.AppendLine($"namespace {classInfo.ContainingNamespace};");
-        sb.AppendLine();
-
         var classSyntax = SyntaxFactory.ClassDeclaration(classInfo.Name)
         .WithModifiers(
             SyntaxFactory.TokenList(
@@ -85,8 +81,11 @@ public class ProtoClassGenerator
             classInfo = parentClass;
         }
 
-        sb.Append(classSyntax.NormalizeWhitespace().ToFullString());
-        return sb.ToString();
+        var namespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(
+            SyntaxFactory.IdentifierName(classInfo.ContainingNamespace.ToString()));
+
+        namespaceDeclaration = namespaceDeclaration.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(classSyntax));
+        return namespaceDeclaration.NormalizeWhitespace().ToFullString();
     }
 
     private static string GetTypeName(PropertyInfo shadow)
@@ -102,7 +101,7 @@ public class ProtoClassGenerator
             return $"{type.ContainingNamespace}.{type.Name}";
 
         StringBuilder sb = new();
-        sb.Append($"{type.ContainingNamespace}{type.Name}<");
+        sb.Append($"{type.ContainingNamespace}.{type.Name}<");
 
         for (int i = 0; i < type.TypeArguments.Length; i++)
         {
