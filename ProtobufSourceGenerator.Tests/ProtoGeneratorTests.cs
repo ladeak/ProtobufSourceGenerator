@@ -256,6 +256,40 @@ public partial class Entity
     }
 
     [Fact]
+    public async Task NullabeGenericReferenceTypesProperties()
+    {
+        var code = @"#nullable enable
+namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class Entity
+{
+    public System.Collections.Generic.List<string?> Id { get; set; } = new();
+}";
+
+        var generated = @"#nullable enable
+namespace Test;
+public partial class Entity
+{
+    [ProtoBuf.ProtoMember(1)]
+    private System.Collections.Generic.List<System.String?> ProtoId { get => Id; set => Id = value; }
+}";
+
+        var test = new VerifyCS.Test
+        {
+            TestState =
+            {
+                Sources = { code },
+                GeneratedSources =
+                {
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                },
+            },
+        };
+
+        await test.RunAsync();
+    }
+
+    [Fact]
     public async Task NullabeValueTypesProperties()
     {
         var code = @"#nullable enable
