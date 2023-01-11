@@ -81,9 +81,13 @@ public class ProtoClassGenerator
             classInfo = parentClass;
         }
 
-        var namespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(
-            SyntaxFactory.IdentifierName(classInfo.ContainingNamespace.ToString()));
+        // Adding namespace
+        var namespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(SyntaxFactory.IdentifierName(classInfo.ContainingNamespace.ToString()));
 
+        // Adding nullability
+        namespaceDeclaration = namespaceDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Trivia(SyntaxFactory.NullableDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.EnableKeyword), true))));
+
+        // Adding type
         namespaceDeclaration = namespaceDeclaration.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(classSyntax));
         return namespaceDeclaration.NormalizeWhitespace().ToFullString();
     }
@@ -98,7 +102,12 @@ public class ProtoClassGenerator
     private static string GetTypeName(INamedTypeSymbol type)
     {
         if (!type.IsGenericType)
-            return $"{type.ContainingNamespace}.{type.Name}";
+        {
+            if (type.NullableAnnotation == NullableAnnotation.Annotated && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
+                return $"{type.ContainingNamespace}.{type.Name}?";
+            else
+                return $"{type.ContainingNamespace}.{type.Name}";
+        }
 
         StringBuilder sb = new();
         sb.Append($"{type.ContainingNamespace}.{type.Name}<");
@@ -115,6 +124,10 @@ public class ProtoClassGenerator
                 sb.Append(", ");
         }
         sb.Append(">");
+        if (type.NullableAnnotation == NullableAnnotation.Annotated && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
+        {
+            sb.Append("?");
+        }
         return sb.ToString();
     }
 }

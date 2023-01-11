@@ -19,7 +19,8 @@ public partial class Entity
     public int Id { get; set; }
 }";
 
-        var generated = @"namespace Test;
+        var generated = @"#nullable enable
+namespace Test;
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
@@ -55,7 +56,8 @@ public record SomeEntity
     public int Id { get; set; }
 }";
 
-        var generated = @"namespace Test;
+        var generated = @"#nullable enable
+namespace Test;
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
@@ -91,12 +93,14 @@ public partial class Entity
     public int Id { get; set; }
 }";
 
-        var generated = @"namespace Test;
+        var generated = @"#nullable enable
+namespace Test;
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
     private System.Int32 ProtoId { get => Id; set => Id = value; }
 }";
+
         var test = new VerifyCS.Test
         {
             TestState =
@@ -128,14 +132,16 @@ public partial class Entity
     public int Id { get; set; }
 }";
 
-        var generatedEntity = @"namespace Test;
+        var generatedEntity = @"#nullable enable
+namespace Test;
 public partial class Entity
 {
     [ProtoBuf.ProtoMember(1)]
     private System.Int32 ProtoId { get => Id; set => Id = value; }
 }";
 
-        var generatedSomeEntity = @"namespace Test;
+        var generatedSomeEntity = @"#nullable enable
+namespace Test;
 public partial class Entity
 {
     public partial class SomeEntity
@@ -184,6 +190,98 @@ public class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
+                },
+            },
+        };
+
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task InitOnlyProperties_DoNotGenerate()
+    {
+        var code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class Entity
+{
+    public int Id { get; init; }
+}";
+
+        var test = new VerifyCS.Test
+        {
+            TestState =
+            {
+                Sources = { code },
+                GeneratedSources =
+                {
+                },
+            },
+        };
+
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task NullabeReferenceTypesProperties()
+    {
+        var code = @"#nullable enable
+namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class Entity
+{
+    public string? Id { get; set; }
+}";
+
+        var generated = @"#nullable enable
+namespace Test;
+public partial class Entity
+{
+    [ProtoBuf.ProtoMember(1)]
+    private System.String? ProtoId { get => Id; set => Id = value; }
+}";
+
+        var test = new VerifyCS.Test
+        {
+            TestState =
+            {
+                Sources = { code },
+                GeneratedSources =
+                {
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                },
+            },
+        };
+
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task NullabeValueTypesProperties()
+    {
+        var code = @"#nullable enable
+namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class Entity
+{
+    public int? Id { get; set; }
+}";
+
+        var generated = @"#nullable enable
+namespace Test;
+public partial class Entity
+{
+    [ProtoBuf.ProtoMember(1)]
+    private System.Nullable<System.Int32> ProtoId { get => Id; set => Id = value; }
+}";
+
+        var test = new VerifyCS.Test
+        {
+            TestState =
+            {
+                Sources = { code },
+                GeneratedSources =
+                {
+                    (typeof(ProtoGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
                 },
             },
         };

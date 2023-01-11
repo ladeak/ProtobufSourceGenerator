@@ -65,7 +65,7 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
             var typeSymbol = _semantics.GetDeclaredSymbol(currentClass);
             var propertySymbol = _semantics.GetDeclaredSymbol(node);
             if (propertySymbol.GetMethod != null && !propertySymbol.GetMethod.IsReadOnly
-            && propertySymbol.SetMethod != null && !propertySymbol.SetMethod.IsReadOnly)
+            && propertySymbol.SetMethod != null && !propertySymbol.SetMethod.IsReadOnly && !propertySymbol.SetMethod.IsInitOnly)
                 _properties.Add(new PropertyInfo(currentClass, node, typeSymbol, propertySymbol));
         }
         base.VisitPropertyDeclaration(node);
