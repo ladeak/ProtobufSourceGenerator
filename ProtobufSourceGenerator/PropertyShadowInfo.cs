@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtobufSourceGenerator;
 
-public class PropertyShadowInfo
+internal sealed class PropertyShadowInfo
 {
     public PropertyShadowInfo(ClassShadowInfo classInfo, PropertyDeclarationSyntax property, INamedTypeSymbol typeSymbol, IPropertySymbol propertySymbol)
     {

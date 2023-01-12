@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtobufSourceGenerator;
 
-public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
+internal sealed class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
 {
     private readonly SemanticModel _semantics;
     private List<PropertyShadowInfo> _properties;
@@ -67,33 +67,13 @@ public class ProtoSyntaxTreeWalker : CSharpSyntaxWalker
             var typeSymbol = _semantics.GetDeclaredSymbol(currentClass.TypeDeclaration);
             var propertySymbol = _semantics.GetDeclaredSymbol(node);
 
-            bool hasProtoAttribute = HasProtoProperties(propertySymbol, out var tag);
+            bool hasProtoAttribute = PropertyAttributeParser.HasProtoProperties(propertySymbol, out var tag);
             if (hasProtoAttribute)
                 currentClass.UsedTags.Add(tag);
 
-            if (propertySymbol.GetMethod != null
-                && propertySymbol.SetMethod != null && !propertySymbol.SetMethod.IsReadOnly && !propertySymbol.SetMethod.IsInitOnly
-                && !hasProtoAttribute)
+            if (PropertyAttributeParser.CanGenerateProperty(propertySymbol))
                 _properties.Add(new PropertyShadowInfo(currentClass, node, typeSymbol, propertySymbol));
         }
         base.VisitPropertyDeclaration(node);
-    }
-
-    private static bool HasProtoProperties(IPropertySymbol propertySymbol, out int tag)
-    {
-        tag = default;
-        bool hasProtoAttribute = false;
-        foreach (var attribute in propertySymbol.GetAttributes())
-        {
-            if (attribute.AttributeClass.ToString() == "ProtoBuf.ProtoMemberAttribute" || attribute.AttributeClass.ToString() == "ProtoBuf.ProtoIgnoreAttribute")
-            {
-                hasProtoAttribute = true;
-                var member = attribute.ConstructorArguments.FirstOrDefault(x => x.Kind == TypedConstantKind.Primitive && x.Type.SpecialType == SpecialType.System_Int32);
-                if (member is { Value: int parsedTag })
-                    tag = parsedTag;
-            }
-        }
-
-        return hasProtoAttribute;
     }
 }
