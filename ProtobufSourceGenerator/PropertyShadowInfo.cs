@@ -3,18 +3,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtobufSourceGenerator;
 
-public class PropertyInfo
+public class PropertyShadowInfo
 {
-    public PropertyInfo(ClassDeclarationSyntax classDeclaration, PropertyDeclarationSyntax property, INamedTypeSymbol typeSymbol, IPropertySymbol propertySymbol)
+    public PropertyShadowInfo(ClassShadowInfo classInfo, PropertyDeclarationSyntax property, INamedTypeSymbol typeSymbol, IPropertySymbol propertySymbol)
     {
-        ClassDeclaration = classDeclaration;
+        ClassInfo = classInfo;
         Property = property;
         TypeSymbol = typeSymbol;
         PropertySymbol = propertySymbol;
     }
 
-    public ClassDeclarationSyntax ClassDeclaration { get; }
+    public ClassShadowInfo ClassInfo { get; }
+
     public PropertyDeclarationSyntax Property { get; }
+
     public INamedTypeSymbol TypeSymbol { get; }
+
     public IPropertySymbol PropertySymbol { get; }
 }

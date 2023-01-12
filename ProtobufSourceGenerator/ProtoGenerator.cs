@@ -9,7 +9,7 @@ public class ProtoGenerator : ISourceGenerator
     public void Execute(GeneratorExecutionContext context)
     {
         var compilation = context.Compilation;
-        List<PropertyInfo> propertyShadowInfos = new();
+        List<PropertyShadowInfo> propertyShadowInfos = new();
         foreach (var tree in compilation.SyntaxTrees)
         {
             var root = tree.GetRoot();

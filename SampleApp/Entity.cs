@@ -26,7 +26,8 @@ public partial class InitEntity
 [ProtoContract]
 public partial class CustomOrderedEntity
 {
+    [ProtoMember(1)]
     public int Id { get; set; }
 
-    public List<string?> Value { get; set; }
+    public List<string?> Value { get; set; } = new();
 }

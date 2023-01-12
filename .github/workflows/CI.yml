@@ -16,6 +16,6 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         include-prerelease: true
     - name: Build
-      run: dotnet build ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }} --no-self-contained
+      run: dotnet build ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }}
     - name: Test
       run: dotnet test ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }}

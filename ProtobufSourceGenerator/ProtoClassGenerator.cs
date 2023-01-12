@@ -9,19 +9,12 @@ namespace ProtobufSourceGenerator;
 
 public class ProtoClassGenerator
 {
-    public IEnumerable<(string, string)> CreateClasses(IEnumerable<PropertyInfo> propertyShadows) => propertyShadows.GroupBy(x => x.TypeSymbol.Name).Select(x => (x.Key, CreateClass(x)));
+    public IEnumerable<(string, string)> CreateClasses(IEnumerable<PropertyShadowInfo> propertyShadows) => propertyShadows.GroupBy(x => x.TypeSymbol.Name).Select(x => (x.Key, CreateClass(x)));
 
-    private string CreateClass(IEnumerable<PropertyInfo> propertyShadows)
+    private string CreateClass(IEnumerable<PropertyShadowInfo> propertyShadows)
     {
-        var classInfo = propertyShadows.First().TypeSymbol;
-
-        var classSyntax = SyntaxFactory.ClassDeclaration(classInfo.Name)
-        .WithModifiers(
-            SyntaxFactory.TokenList(
-                new[] {
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    SyntaxFactory.Token(SyntaxKind.PartialKeyword)
-                }));
+        var typeInfo = propertyShadows.First().TypeSymbol;
+        TypeDeclarationSyntax typeSyntax = GenerateType(typeInfo);
 
         int counter = 1;
         foreach (var shadow in propertyShadows)
@@ -44,6 +37,9 @@ public class ProtoClassGenerator
                     SyntaxFactory.IdentifierName("value"))))
                   .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
 
+                while (shadow.ClassInfo.UsedTags.Contains(counter))
+                    counter++;
+
                 var protoMemberAttribute = SyntaxFactory.SingletonList(
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList(
@@ -61,73 +57,54 @@ public class ProtoClassGenerator
                 .NormalizeWhitespace().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(" ")))
                 .WithAttributeLists(protoMemberAttribute);
 
-                classSyntax = classSyntax.WithMembers(classSyntax.Members.Add(newProperty));
+                typeSyntax = typeSyntax.WithMembers(typeSyntax.Members.Add(newProperty));
             }
         }
 
         // For all parent types, we wrap the inner type
-        while (classInfo.ContainingSymbol is INamedTypeSymbol parentClass)
+        while (typeInfo.ContainingSymbol is INamedTypeSymbol parentClass)
         {
-            var parentClassSyntax = SyntaxFactory.ClassDeclaration(parentClass.Name)
-                .WithModifiers(
-                SyntaxFactory.TokenList(
-                    new[] {
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    SyntaxFactory.Token(SyntaxKind.PartialKeyword)
-           }));
-
-            parentClassSyntax = parentClassSyntax.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(classSyntax));
-            classSyntax = parentClassSyntax;
-            classInfo = parentClass;
+            var parentClassSyntax = GenerateType(parentClass);
+            parentClassSyntax = parentClassSyntax.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(typeSyntax));
+            typeSyntax = parentClassSyntax;
+            typeInfo = parentClass;
         }
 
         // Adding namespace
-        var namespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(SyntaxFactory.IdentifierName(classInfo.ContainingNamespace.ToString()));
+        var namespaceDeclaration = SyntaxFactory.FileScopedNamespaceDeclaration(SyntaxFactory.IdentifierName(typeInfo.ContainingNamespace.ToString()));
 
         // Adding nullability
         namespaceDeclaration = namespaceDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Trivia(SyntaxFactory.NullableDirectiveTrivia(SyntaxFactory.Token(SyntaxKind.EnableKeyword), true))));
 
         // Adding type
-        namespaceDeclaration = namespaceDeclaration.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(classSyntax));
+        namespaceDeclaration = namespaceDeclaration.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(typeSyntax));
         return namespaceDeclaration.NormalizeWhitespace().ToFullString();
     }
 
-    private static string GetTypeName(PropertyInfo shadow)
+    private static TypeDeclarationSyntax GenerateType(INamedTypeSymbol typeInfo)
+    {
+        TypeDeclarationSyntax type = typeInfo switch
+        {
+            { IsRecord: true, IsReferenceType: true } => SyntaxFactory.RecordDeclaration(SyntaxFactory.Token(SyntaxKind.RecordKeyword), typeInfo.Name).WithClassOrStructKeyword(SyntaxFactory.Token(SyntaxKind.ClassKeyword)).WithOpenBraceToken(SyntaxFactory.Token(SyntaxKind.OpenBraceToken)).WithCloseBraceToken(SyntaxFactory.Token(SyntaxKind.CloseBraceToken)),
+            { IsRecord: true, IsReferenceType: false } => SyntaxFactory.RecordDeclaration(SyntaxFactory.Token(SyntaxKind.RecordKeyword), typeInfo.Name).WithClassOrStructKeyword(SyntaxFactory.Token(SyntaxKind.StructDeclaration)).WithOpenBraceToken(SyntaxFactory.Token(SyntaxKind.OpenBraceToken)).WithCloseBraceToken(SyntaxFactory.Token(SyntaxKind.CloseBraceToken)),
+            { IsReferenceType: false } => SyntaxFactory.StructDeclaration(typeInfo.Name),
+            _ => SyntaxFactory.ClassDeclaration(typeInfo.Name),
+        };
+
+        return type.WithModifiers(
+            SyntaxFactory.TokenList(
+                new[] {
+                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                    SyntaxFactory.Token(SyntaxKind.PartialKeyword)
+                }));
+    }
+
+    private static string GetTypeName(PropertyShadowInfo shadow)
     {
         if (shadow.PropertySymbol.Type is INamedTypeSymbol propertyType)
             return GetTypeName(propertyType);
         return shadow.PropertySymbol.Type.Name;
     }
 
-    private static string GetTypeName(INamedTypeSymbol type)
-    {
-        if (!type.IsGenericType)
-        {
-            if (type.NullableAnnotation == NullableAnnotation.Annotated && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
-                return $"{type.ContainingNamespace}.{type.Name}?";
-            else
-                return $"{type.ContainingNamespace}.{type.Name}";
-        }
-
-        StringBuilder sb = new();
-        sb.Append($"{type.ContainingNamespace}.{type.Name}<");
-
-        for (int i = 0; i < type.TypeArguments.Length; i++)
-        {
-            var typeArgument = type.TypeArguments[i];
-            if (typeArgument is INamedTypeSymbol namedType)
-                sb.Append(GetTypeName(namedType));
-            else
-                sb.Append(typeArgument.Name);
-
-            if (i < type.TypeArguments.Length - 1)
-                sb.Append(", ");
-        }
-        sb.Append(">");
-        if (type.NullableAnnotation == NullableAnnotation.Annotated && type.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
-        {
-            sb.Append("?");
-        }
-        return sb.ToString();
-    }
+    private static string GetTypeName(INamedTypeSymbol type) => type.ToString();
 }
