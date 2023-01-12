@@ -7,7 +7,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsPackable>true</IsPackable>
     <PackageId>LaDeak.ProtobufSourceGenerator</PackageId>
-    <Description>A source generator that generates helper classes with properties attributes with ProtoMember attribute.</Description>
+    <Description>A source generator that generates partial helper classes where member properties are attributed with ProtoMember attribute.</Description>
   </PropertyGroup>
 
   <ItemGroup>
