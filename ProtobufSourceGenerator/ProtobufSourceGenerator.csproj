@@ -8,6 +8,8 @@
     <IsPackable>true</IsPackable>
     <PackageId>LaDeak.ProtobufSourceGenerator</PackageId>
     <Description>A source generator that generates partial helper classes where member properties are attributed with ProtoMember attribute.</Description>
+    <PackageTags>protobuf, source generator, serialization</PackageTags>
+    <PackageProjectUrl>https://github.com/ladeak/ProtobufSourceGenerator</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
