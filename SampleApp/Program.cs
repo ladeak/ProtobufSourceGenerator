@@ -1,5 +1,4 @@
-﻿
-using ProtoBuf;
+﻿using ProtoBuf;
 using SampleApp;
 
 using var ms = new MemoryStream();

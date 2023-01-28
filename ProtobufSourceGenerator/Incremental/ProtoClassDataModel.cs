@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace ProtobufSourceGenerator.Incremental;
 
 public class ProtoClassDataModel
 {
-    public ProtoClassDataModel(INamedTypeSymbol typeSymbol, IEnumerable<ProtoPropertyDataModel> propertyDataModels)
+    public ProtoClassDataModel(INamedTypeSymbol typeSymbol)
     {
         UsedTags = new();
         Name = typeSymbol.Name;
@@ -14,10 +13,8 @@ public class ProtoClassDataModel
         IsRecord = typeSymbol.IsRecord;
         IsReferenceType = typeSymbol.IsReferenceType;
         if (typeSymbol.ContainingSymbol is INamedTypeSymbol parentClass)
-        {
-            Parent = new ProtoClassDataModel(parentClass, Enumerable.Empty<ProtoPropertyDataModel>());
-        }
-        PropertyDataModels = propertyDataModels;
+            Parent = new ProtoClassDataModel(parentClass);
+        PropertyDataModels = new List<ProtoPropertyDataModel>();
     }
 
     public HashSet<int> UsedTags { get; }
@@ -32,5 +29,5 @@ public class ProtoClassDataModel
 
     public ProtoClassDataModel? Parent { get; }
 
-    public IEnumerable<ProtoPropertyDataModel> PropertyDataModels { get; }
+    public IList<ProtoPropertyDataModel> PropertyDataModels { get; }
 }

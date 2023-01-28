@@ -8,9 +8,7 @@ namespace ProtobufSourceGenerator.Incremental;
 
 internal sealed class IncrementalProtoClassGenerator
 {
-    public IEnumerable<(string, string)> CreateClasses(IEnumerable<ProtoClassDataModel> classModels) => classModels.Select(x => (x.Name, CreateClass(x)));
-
-    private string CreateClass(ProtoClassDataModel classModel)
+    public string CreateClass(ProtoClassDataModel classModel)
     {
         TypeDeclarationSyntax typeSyntax = GenerateType(classModel);
 
@@ -98,6 +96,4 @@ internal sealed class IncrementalProtoClassGenerator
     {
         return property.PropertyTypeName;
     }
-
-    private static string GetTypeName(INamedTypeSymbol type) => type.ToString();
 }
