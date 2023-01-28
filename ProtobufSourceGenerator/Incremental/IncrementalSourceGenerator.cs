@@ -37,7 +37,7 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
             }).WithComparer(ProtoClassDataModelComparer.Instance)
             .Where(x => x.PropertyDataModels.Any());
 
-        context.RegisterSourceOutput(provider, (spc, classModel) =>
+        context.RegisterImplementationSourceOutput(provider, (spc, classModel) =>
         {
             var source = ClassGenerator.CreateClass(classModel);
             spc.AddSource($"Proto{classModel.Name}.g.cs", source);

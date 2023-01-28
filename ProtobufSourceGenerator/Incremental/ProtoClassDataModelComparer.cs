@@ -16,13 +16,13 @@ internal sealed class ProtoClassDataModelComparer : IEqualityComparer<ProtoClass
             && x.IsReferenceType == y.IsReferenceType
             && x.UsedTags.Count == y.UsedTags.Count
             && !(x.Parent != null ^ y.Parent != null)
-            && x.PropertyDataModels.SequenceEqual(y.PropertyDataModels) 
-            && x.UsedTags.SequenceEqual(y.UsedTags) 
+            && x.PropertyDataModels.SequenceEqual(y.PropertyDataModels)
+            && x.UsedTags.SequenceEqual(y.UsedTags)
             && (x.Parent?.Equals(y.Parent) ?? true);
     }
 
     public int GetHashCode(ProtoClassDataModel obj)
     {
-        throw new NotImplementedException();
+        return (obj.Name, obj.Namespace, obj.IsRecord, obj.IsReferenceType, obj.Parent != null, obj.PropertyDataModels.Count, obj.UsedTags.Count).GetHashCode();
     }
 }
