@@ -7,7 +7,7 @@ public record struct ProtoPropertyDataModel
     public ProtoPropertyDataModel(IPropertySymbol propertySymbol)
     {
         PropertyIdentifier = propertySymbol.Name;
-        PropertyTypeName = propertySymbol.Type.Name;
+        PropertyTypeName = propertySymbol.Type.ToString();
     }
 
     public string PropertyTypeName { get; }

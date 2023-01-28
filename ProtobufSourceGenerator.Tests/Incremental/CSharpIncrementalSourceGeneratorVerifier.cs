@@ -1,18 +1,16 @@
 ﻿using System.Collections.Immutable;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
-using Microsoft.CodeAnalysis.Text;
 using ProtoBuf;
 
-namespace ProtobufSourceGenerator.Tests;
+namespace ProtobufSourceGenerator.Tests.Incremental;
 
-public static class CSharpSourceGeneratorVerifier<TSourceGenerator> where TSourceGenerator : ISourceGenerator, new()
+public static class CSharpIncrementalSourceGeneratorVerifier<TIncrementalGenerator> where TIncrementalGenerator : IIncrementalGenerator, new()
 {
-    public class Test : CSharpSourceGeneratorTest<TSourceGenerator, XUnitVerifier>
+    public class Test : CSharpSourceGeneratorTest<EmptySourceGeneratorProvider, XUnitVerifier>
     {
         public Test()
         {
@@ -28,6 +26,11 @@ public static class CSharpSourceGeneratorVerifier<TSourceGenerator> where TSourc
         }
 
         public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.Default;
+
+        protected override IEnumerable<ISourceGenerator> GetSourceGenerators()
+        {
+            return new[] { new TIncrementalGenerator().AsSourceGenerator() };
+        }
 
         private static ImmutableDictionary<string, ReportDiagnostic> GetNullableWarningsFromCompiler()
         {

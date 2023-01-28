@@ -9,7 +9,7 @@ public class ProtoClassDataModel
     {
         UsedTags = new();
         Name = typeSymbol.Name;
-        Namespace = typeSymbol.ContainingNamespace.ToString();
+        Namespace = typeSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : typeSymbol.ContainingNamespace.ToString();
         IsRecord = typeSymbol.IsRecord;
         IsReferenceType = typeSymbol.IsReferenceType;
         if (typeSymbol.ContainingSymbol is INamedTypeSymbol parentClass)

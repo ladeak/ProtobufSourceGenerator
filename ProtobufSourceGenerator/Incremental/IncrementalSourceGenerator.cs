@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
+﻿using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,18 +6,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtobufSourceGenerator.Incremental;
 
-//[Generator]
+[Generator]
 public class IncrementalSourceGenerator : IIncrementalGenerator
 {
     private IncrementalProtoClassGenerator ClassGenerator { get; } = new IncrementalProtoClassGenerator();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var provider = context.SyntaxProvider.ForAttributeWithMetadataName("ProtoBuf.ProtoContractAttribute",
-            static (SyntaxNode syntaxNode, CancellationToken token) =>
-            {
-                return syntaxNode is TypeDeclarationSyntax node && node.Modifiers.Any(x => x.IsKeyword() && x.IsKind(SyntaxKind.PartialKeyword));
-            },
+        var provider = context.SyntaxProvider.ForAttributeWithMetadataName("ProtoBuf.ProtoContractAttribute", FilterClassNodes,
             static (GeneratorAttributeSyntaxContext context, CancellationToken token) =>
             {
                 var typeSymbol = context.TargetSymbol as INamedTypeSymbol;
@@ -40,12 +34,24 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
                     }
                 }
                 return currentClass;
-            }).WithComparer(ProtoClassDataModelComparer.Instance);
+            }).WithComparer(ProtoClassDataModelComparer.Instance)
+            .Where(x => x.PropertyDataModels.Any());
 
         context.RegisterSourceOutput(provider, (spc, classModel) =>
         {
             var source = ClassGenerator.CreateClass(classModel);
             spc.AddSource($"Proto{classModel.Name}.g.cs", source);
         });
+    }
+
+    public static bool FilterClassNodes(SyntaxNode syntaxNode, CancellationToken token)
+    {
+        do
+        {
+            if (syntaxNode is TypeDeclarationSyntax node && !node.Modifiers.Any(x => x.IsKeyword() && x.IsKind(SyntaxKind.PartialKeyword)))
+                return false;
+            syntaxNode = syntaxNode.Parent;
+        } while (syntaxNode != null);
+        return true;
     }
 }

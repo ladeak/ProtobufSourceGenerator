@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace ProtobufSourceGenerator;
 
-[Generator]
+//[Generator]
 public class ProtoGenerator : ISourceGenerator
 {
     public void Execute(GeneratorExecutionContext context)
