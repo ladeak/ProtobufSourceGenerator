@@ -1,4 +1,4 @@
-# ProtobufSourceGenerator
+# Protobuf Source Generator
 
 A source generator that generates partial helper classes where member properties are attributed with ProtoMember attribute for serialization with [protobuf-net](https://github.com/protobuf-net/protobuf-net).
 
