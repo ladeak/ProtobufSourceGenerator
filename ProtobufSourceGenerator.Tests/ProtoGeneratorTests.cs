@@ -23,7 +23,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int ProtoId { get => Id; set => Id = value; }
 }";
         var test = new VerifyCS.Test
@@ -60,7 +60,7 @@ public record SomeEntity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int ProtoId { get => Id; set => Id = value; }
 }";
         var test = new VerifyCS.Test
@@ -97,7 +97,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int ProtoId { get => Id; set => Id = value; }
 }";
 
@@ -136,7 +136,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int ProtoId { get => Id; set => Id = value; }
 }";
 
@@ -146,7 +146,7 @@ public partial class Entity
 {
     public partial class SomeEntity
     {
-        [ProtoBuf.ProtoMember(1)]
+        [global::ProtoBuf.ProtoMember(1)]
         private int ProtoId { get => Id; set => Id = value; }
     }
 }";
@@ -236,7 +236,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private string? ProtoId { get => Id; set => Id = value; }
 }";
 
@@ -270,7 +270,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private System.Collections.Generic.List<string?> ProtoId { get => Id; set => Id = value; }
 }";
 
@@ -304,7 +304,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private System.Collections.Generic.List<int?>? ProtoId { get => Id; set => Id = value; }
 }";
 
@@ -338,7 +338,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int? ProtoId { get => Id; set => Id = value; }
 }";
 
@@ -365,7 +365,7 @@ public partial class Entity
 [ProtoBuf.ProtoContract]
 public partial class Entity
 {   
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     public int Id { get; set; }
 }";
 
@@ -415,7 +415,7 @@ public partial class Entity
 [ProtoBuf.ProtoContract]
 public partial class Entity
 {   
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     public int Id { get; set; }
 
     public string Value { get; set; }
@@ -425,7 +425,7 @@ public partial class Entity
 namespace Test;
 public partial class Entity
 {
-    [ProtoBuf.ProtoMember(2)]
+    [global::ProtoBuf.ProtoMember(2)]
     private string ProtoValue { get => Value; set => Value = value; }
 }";
 
@@ -458,7 +458,7 @@ public partial record Entity
 namespace Test;
 public partial record class Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int ProtoId { get => Id; set => Id = value; }
 }";
         var test = new VerifyCS.Test
@@ -490,7 +490,7 @@ public partial struct Entity
 namespace Test;
 public partial struct Entity
 {
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     private int ProtoId { get => Id; set => Id = value; }
 }";
         var test = new VerifyCS.Test

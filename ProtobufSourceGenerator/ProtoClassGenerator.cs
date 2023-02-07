@@ -42,8 +42,8 @@ internal sealed class ProtoClassGenerator
                 var protoMemberAttribute = SyntaxFactory.SingletonList(
                     SyntaxFactory.AttributeList(
                         SyntaxFactory.SingletonSeparatedList(
-                            SyntaxFactory.Attribute(
-                                SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName("ProtoBuf"), SyntaxFactory.IdentifierName("ProtoMember")))
+                            SyntaxFactory.Attribute(SyntaxFactory.QualifiedName(SyntaxFactory.AliasQualifiedName(
+                                SyntaxFactory.IdentifierName(SyntaxFactory.Token(SyntaxKind.GlobalKeyword)), SyntaxFactory.IdentifierName("ProtoBuf")), SyntaxFactory.IdentifierName("ProtoMember")))
                             .WithArgumentList(
                                 SyntaxFactory.AttributeArgumentList(
                                     SyntaxFactory.SingletonSeparatedList(

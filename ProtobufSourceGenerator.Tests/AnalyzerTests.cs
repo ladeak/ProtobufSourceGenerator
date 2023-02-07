@@ -57,7 +57,7 @@ public class SomeEntity
 [ProtoBuf.ProtoContract]
 public partial class Entity
 {   
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     public SomeEntity Id { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
@@ -76,7 +76,7 @@ public class SomeEntity
 [ProtoBuf.ProtoContract]
 public partial class Entity
 {   
-    [ProtoBuf.ProtoMember(1)]
+    [global::ProtoBuf.ProtoMember(1)]
     public SomeEntity Id { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };

@@ -35,7 +35,8 @@ internal sealed class IncrementalProtoClassGenerator
                 SyntaxFactory.AttributeList(
                     SyntaxFactory.SingletonSeparatedList(
                         SyntaxFactory.Attribute(
-                            SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName("ProtoBuf"), SyntaxFactory.IdentifierName("ProtoMember")))
+                            SyntaxFactory.QualifiedName(SyntaxFactory.AliasQualifiedName(
+                                SyntaxFactory.IdentifierName(SyntaxFactory.Token(SyntaxKind.GlobalKeyword)), SyntaxFactory.IdentifierName("ProtoBuf")), SyntaxFactory.IdentifierName("ProtoMember")))
                         .WithArgumentList(
                             SyntaxFactory.AttributeArgumentList(
                                 SyntaxFactory.SingletonSeparatedList(
@@ -54,7 +55,8 @@ internal sealed class IncrementalProtoClassGenerator
         typeSyntax = typeSyntax.WithAttributeLists(SyntaxFactory.SingletonList(
             SyntaxFactory.AttributeList(SyntaxFactory.SingletonSeparatedList(
                 SyntaxFactory.Attribute(
-                    SyntaxFactory.QualifiedName(SyntaxFactory.QualifiedName(SyntaxFactory.QualifiedName(SyntaxFactory.IdentifierName("System"), SyntaxFactory.IdentifierName("Runtime")), SyntaxFactory.IdentifierName("CompilerServices")), SyntaxFactory.IdentifierName("CompilerGeneratedAttribute")))))));
+                    SyntaxFactory.QualifiedName(SyntaxFactory.QualifiedName(SyntaxFactory.QualifiedName(SyntaxFactory.AliasQualifiedName(
+                                SyntaxFactory.IdentifierName(SyntaxFactory.Token(SyntaxKind.GlobalKeyword)), SyntaxFactory.IdentifierName("System")), SyntaxFactory.IdentifierName("Runtime")), SyntaxFactory.IdentifierName("CompilerServices")), SyntaxFactory.IdentifierName("CompilerGeneratedAttribute")))))));
 
         // For all parent types, we wrap the inner type
         while (classModel.Parent is { } parentClass)
