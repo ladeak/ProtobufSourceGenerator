@@ -27,6 +27,7 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
                         currentClass.UsedTags.Add(tag);
 
                     if (propertySymbol.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax(token) is PropertyDeclarationSyntax propertySyntax
+                        && propertySyntax.AccessorList != null
                         && propertySyntax.AccessorList.Accessors.All(x => x.Body == null && x.ExpressionBody == null))
                     {
                         if (PropertyAttributeParser.CanGenerateProperty(propertySymbol))
