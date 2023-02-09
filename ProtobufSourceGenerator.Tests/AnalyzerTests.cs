@@ -169,4 +169,16 @@ public struct ParentEntity
         test.ExpectedDiagnostics.Add(expected);
         await test.RunAsync();
     }
+
+    [Fact]
+    public async Task NoInfo_ForNonGeneratingContainingType()
+    {
+        string code = @"namespace Test;
+public partial class Entity
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync();
+    }
 }

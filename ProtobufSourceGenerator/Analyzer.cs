@@ -47,17 +47,20 @@ namespace ProtobufSourceGenerator
             if (context.Symbol is not IPropertySymbol propertySymbol)
                 return;
 
-            if (!PropertyAttributeParser.CanGenerateProperty(propertySymbol))
-            {
-                if (!PropertyAttributeParser.HasProtoProperties(propertySymbol, out _))
-                    context.ReportDiagnostic(Diagnostic.Create(Rule03, context.Symbol.Locations.First(), string.Empty));
+            if (context.Symbol.ContainingSymbol is not INamedTypeSymbol containingType
+                || !(HasProtoContractAttribute(containingType) && IsPartial(containingType)))
                 return;
-            }
+
+            if (!PropertyAttributeParser.CanGenerateProperty(propertySymbol))
+                {
+                    if (!PropertyAttributeParser.HasProtoProperties(propertySymbol, out _))
+                        context.ReportDiagnostic(Diagnostic.Create(Rule03, context.Symbol.Locations.First(), string.Empty));
+                    return;
+                }
 
             if (propertySymbol.Type is not INamedTypeSymbol namedType || namedType.SpecialType != SpecialType.None)
                 return;
-
-            bool hasProtoContract = namedType.GetAttributes().Any(x => x.AttributeConstructor.ToString() != "ProtoBuf.ProtoContractAttribute");
+            bool hasProtoContract = HasProtoContractAttribute(namedType);
             bool isPartial = IsPartial(namedType);
 
             if (hasProtoContract && isPartial)
@@ -65,6 +68,11 @@ namespace ProtobufSourceGenerator
 
             var diagnostic = Diagnostic.Create(Rule01, context.Symbol.Locations.First(), string.Empty);
             context.ReportDiagnostic(diagnostic);
+        }
+
+        private static bool HasProtoContractAttribute(INamedTypeSymbol namedType)
+        {
+            return namedType.GetAttributes().Any(x => x.AttributeConstructor.ToString() != "ProtoBuf.ProtoContractAttribute");
         }
 
         private bool IsPartial(INamedTypeSymbol namedType)
