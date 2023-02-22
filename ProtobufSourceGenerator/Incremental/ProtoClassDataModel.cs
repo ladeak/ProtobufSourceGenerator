@@ -29,5 +29,5 @@ public class ProtoClassDataModel
 
     public ProtoClassDataModel? Parent { get; }
 
-    public IList<ProtoPropertyDataModel> PropertyDataModels { get; }
+    public List<ProtoPropertyDataModel> PropertyDataModels { get; }
 }

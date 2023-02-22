@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -27,7 +28,7 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
                         currentClass.UsedTags.Add(tag);
 
                     if (PropertyAttributeParser.CanGenerateAutoProperty(propertySymbol))
-                        currentClass.PropertyDataModels.Add(new ProtoPropertyDataModel(propertySymbol));
+                        currentClass.PropertyDataModels.AddRange(CreatePropertyModels(propertySymbol));
                 }
                 return currentClass;
             }).WithComparer(ProtoClassDataModelComparer.Instance)
@@ -38,6 +39,49 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
             var source = ClassGenerator.CreateClass(classModel);
             spc.AddSource($"Proto{classModel.Name}.g.cs", source);
         });
+    }
+
+    private static IEnumerable<ProtoPropertyDataModel> CreatePropertyModels(IPropertySymbol propertySymbol)
+    {
+        var result = new List<ProtoPropertyDataModel>(2)
+        {
+            new ProtoPropertyDataModel(propertySymbol)
+        };
+        if (propertySymbol.Type is not INamedTypeSymbol namedType || !namedType.IsGenericType)
+            return result;
+
+        if (namedType.OriginalDefinition.SpecialType == SpecialType.System_Collections_Generic_IEnumerable_T)
+        {
+            result.Add(new ProtoPropertyDataModel(propertySymbol, ProtoPropertyDataModel.PropertyKind.EnumerationHelper));
+        }
+        else if (IsCollectionType(namedType.OriginalDefinition))
+        {
+            result.Add(new ProtoPropertyDataModel(propertySymbol, ProtoPropertyDataModel.PropertyKind.CollectionHelper));
+        }
+        return result;
+    }
+
+    private static bool IsCollectionType(INamedTypeSymbol originalNamedType)
+    {
+        if (IsSpecialCollectionType(originalNamedType))
+            return true;
+
+        foreach (var implementedInterface in originalNamedType.Interfaces)
+        {
+            if (IsSpecialCollectionType(implementedInterface.OriginalDefinition))
+                return true;
+        }
+        return false;
+    }
+
+    private static bool IsSpecialCollectionType(INamedTypeSymbol namedType)
+    {
+        if (namedType.SpecialType == SpecialType.System_Collections_Generic_ICollection_T
+                || namedType.SpecialType == SpecialType.System_Collections_Generic_IList_T
+                || namedType.SpecialType == SpecialType.System_Collections_Generic_IReadOnlyCollection_T
+                || namedType.SpecialType == SpecialType.System_Collections_Generic_IReadOnlyList_T)
+            return true;
+        return false;
     }
 
     public static bool FilterClassNodes(SyntaxNode syntaxNode, CancellationToken token)

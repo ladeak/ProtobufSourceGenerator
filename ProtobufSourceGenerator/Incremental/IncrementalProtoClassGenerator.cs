@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -13,20 +14,9 @@ internal sealed class IncrementalProtoClassGenerator
         int counter = 1;
         foreach (ProtoPropertyDataModel property in classModel.PropertyDataModels)
         {
-            var newProperty = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(property.PropertyTypeName),
-              SyntaxFactory.Identifier($"Proto{property.PropertyIdentifier}"))
-              .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
+            PropertyDeclarationSyntax newProperty = CreateSkeletonProperty(property);
 
-            var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-              .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.IdentifierName(property.PropertyIdentifier)))
-              .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
-
-            var setter = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-              .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.AssignmentExpression(
-                SyntaxKind.SimpleAssignmentExpression,
-                SyntaxFactory.IdentifierName(property.PropertyIdentifier),
-                SyntaxFactory.IdentifierName("value"))))
-              .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+            var (getter, setter) = CreateGetterSetter(property);
 
             while (classModel.UsedTags.Contains(counter))
                 counter++;
@@ -81,6 +71,90 @@ internal sealed class IncrementalProtoClassGenerator
         return rootDeclaration.NormalizeWhitespace().ToFullString();
     }
 
+    private PropertyDeclarationSyntax CreateSkeletonProperty(ProtoPropertyDataModel property) => property.Kind switch
+    {
+        ProtoPropertyDataModel.PropertyKind.None => CreateNormalSkeletonProperty(property),
+        ProtoPropertyDataModel.PropertyKind.CollectionHelper => CreateHelperSkeletonProperty(property),
+        ProtoPropertyDataModel.PropertyKind.EnumerationHelper => CreateHelperSkeletonProperty(property),
+        _ => throw new InvalidOperationException("Proto property type kind supported"),
+    };
+
+    private PropertyDeclarationSyntax CreateNormalSkeletonProperty(ProtoPropertyDataModel property)
+    {
+        return SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(property.PropertyTypeName),
+          SyntaxFactory.Identifier(GetNormalPropertyName(property)))
+          .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
+    }
+
+    private PropertyDeclarationSyntax CreateHelperSkeletonProperty(ProtoPropertyDataModel property)
+    {
+        return SyntaxFactory.PropertyDeclaration(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+          SyntaxFactory.Identifier(GetIsEmptyPropertyName(property)))
+          .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword)));
+    }
+
+    private (AccessorDeclarationSyntax Getter, AccessorDeclarationSyntax Setter) CreateGetterSetter(ProtoPropertyDataModel property) => property.Kind switch
+    {
+        ProtoPropertyDataModel.PropertyKind.None => CreateNormalGetterSetter(property),
+        ProtoPropertyDataModel.PropertyKind.CollectionHelper => CreateCollectionHelperGetterSetter(property),
+        ProtoPropertyDataModel.PropertyKind.EnumerationHelper => CreateEnumerationHelperGetterSetter(property),
+        _ => throw new InvalidOperationException("Proto property type kind supported"),
+    };
+
+    private (AccessorDeclarationSyntax Getter, AccessorDeclarationSyntax Setter) CreateNormalGetterSetter(ProtoPropertyDataModel property)
+    {
+        var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+          .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.IdentifierName(property.PropertyIdentifier)))
+          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        var setter = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+          .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.AssignmentExpression(
+            SyntaxKind.SimpleAssignmentExpression,
+            SyntaxFactory.IdentifierName(property.PropertyIdentifier),
+            SyntaxFactory.IdentifierName("value"))))
+          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+        return (getter, setter);
+    }
+
+    private (AccessorDeclarationSyntax Getter, AccessorDeclarationSyntax Setter) CreateCollectionHelperGetterSetter(ProtoPropertyDataModel property)
+    {
+        var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+          .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.BinaryExpression(SyntaxKind.EqualsExpression,
+            SyntaxFactory.ConditionalAccessExpression(SyntaxFactory.IdentifierName(GetNormalPropertyName(property)), SyntaxFactory.MemberBindingExpression(SyntaxFactory.IdentifierName("Count"))),
+            SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0)))))
+          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+        var setter = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+            .WithBody(SyntaxFactory.Block(SyntaxFactory.SingletonList<StatementSyntax>(
+                                SyntaxFactory.IfStatement(SyntaxFactory.IdentifierName("value"),
+                                SyntaxFactory.ExpressionStatement(
+                                    SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, SyntaxFactory.IdentifierName(GetNormalPropertyName(property)), SyntaxFactory.ImplicitObjectCreationExpression()))))));
+
+        return (getter, setter);
+    }
+
+    private (AccessorDeclarationSyntax Getter, AccessorDeclarationSyntax Setter) CreateEnumerationHelperGetterSetter(ProtoPropertyDataModel property)
+    {
+        var getter = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+          .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(
+              SyntaxFactory.BinaryExpression(SyntaxKind.LogicalAndExpression,
+              SyntaxFactory.BinaryExpression(SyntaxKind.NotEqualsExpression, SyntaxFactory.IdentifierName(GetNormalPropertyName(property)), SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+              SyntaxFactory.InvocationExpression(SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                  SyntaxFactory.IdentifierName("System"), SyntaxFactory.IdentifierName("Linq")), SyntaxFactory.IdentifierName("Enumerable")), SyntaxFactory.IdentifierName("Any")))
+                  .WithArgumentList(SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(GetNormalPropertyName(property)))))))))
+          .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+
+        var setter = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+          .WithBody(SyntaxFactory.Block(SyntaxFactory.SingletonList<StatementSyntax>(SyntaxFactory.IfStatement(SyntaxFactory.IdentifierName("value"),
+                                    SyntaxFactory.ExpressionStatement(
+                                        SyntaxFactory.AssignmentExpression(SyntaxKind.SimpleAssignmentExpression, SyntaxFactory.IdentifierName(GetNormalPropertyName(property)),
+                                            SyntaxFactory.InvocationExpression(GetEnumerableEmpty(property))))))));
+
+        return (getter, setter);
+    }
+
     private static TypeDeclarationSyntax GenerateType(ProtoClassDataModel classModel)
     {
         TypeDeclarationSyntax type = classModel switch
@@ -98,4 +172,16 @@ internal sealed class IncrementalProtoClassGenerator
                     SyntaxFactory.Token(SyntaxKind.PartialKeyword)
                 }));
     }
+
+    private static string GetNormalPropertyName(ProtoPropertyDataModel property) => $"Proto{property.PropertyIdentifier}";
+
+    private static string GetIsEmptyPropertyName(ProtoPropertyDataModel property) => $"ProtoIsEmpty{property.PropertyIdentifier}";
+
+    private static MemberAccessExpressionSyntax GetEnumerableEmpty(ProtoPropertyDataModel property) =>
+        SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+            SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.IdentifierName("System"), SyntaxFactory.IdentifierName("Linq")), SyntaxFactory.IdentifierName("Enumerable")),
+            SyntaxFactory.GenericName(SyntaxFactory.Identifier("Empty"))
+            .WithTypeArgumentList(SyntaxFactory.TypeArgumentList(SyntaxFactory.SingletonSeparatedList<TypeSyntax>(SyntaxFactory.ParseTypeName(property.GenertyTypeParameter)))));
 }
