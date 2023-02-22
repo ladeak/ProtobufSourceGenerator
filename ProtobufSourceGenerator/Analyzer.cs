@@ -51,12 +51,12 @@ namespace ProtobufSourceGenerator
                 || !(HasProtoContractAttribute(containingType) && IsPartial(containingType)))
                 return;
 
-            if (!PropertyAttributeParser.CanGenerateProperty(propertySymbol))
-                {
-                    if (!PropertyAttributeParser.HasProtoProperties(propertySymbol, out _))
-                        context.ReportDiagnostic(Diagnostic.Create(Rule03, context.Symbol.Locations.First(), string.Empty));
-                    return;
-                }
+            if (!PropertyAttributeParser.CanGenerateAutoProperty(propertySymbol))
+            {
+                if (!PropertyAttributeParser.HasProtoProperties(propertySymbol, out _))
+                    context.ReportDiagnostic(Diagnostic.Create(Rule03, context.Symbol.Locations.First(), string.Empty));
+                return;
+            }
 
             if (propertySymbol.Type is not INamedTypeSymbol namedType || namedType.SpecialType != SpecialType.None)
                 return;

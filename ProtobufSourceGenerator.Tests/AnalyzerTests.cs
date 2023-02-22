@@ -181,4 +181,21 @@ public partial class Entity
         var test = new AnalyzeCS() { TestCode = code };
         await test.RunAsync();
     }
+
+    [Fact]
+    public async Task NotAutoProperty_GeneratesProtoWarning()
+    {
+        string code = @"#nullable enable
+namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class Entity
+{   
+    private int _id;
+    public int Id { get => _id; set { if(value > 0) throw new System.Exception(); _id = value; } }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        DiagnosticResult expected = VerifyCS.Diagnostic("Proto03").WithLocation(7, 16).WithArguments(string.Empty);
+        test.ExpectedDiagnostics.Add(expected);
+        await test.RunAsync();
+    }
 }

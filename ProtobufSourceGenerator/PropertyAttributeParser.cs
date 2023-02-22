@@ -1,10 +1,23 @@
 ﻿using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProtobufSourceGenerator;
 
 internal sealed class PropertyAttributeParser
 {
+    public static bool CanGenerateAutoProperty(IPropertySymbol propertySymbol, CancellationToken token = default)
+    {
+        if (propertySymbol.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax(token) is PropertyDeclarationSyntax propertySyntax
+                       && propertySyntax.AccessorList != null
+                       && propertySyntax.AccessorList.Accessors.All(x => x.Body == null && x.ExpressionBody == null))
+        {
+            return PropertyAttributeParser.CanGenerateProperty(propertySymbol);
+        }
+        return false;
+    }
+
     public static bool CanGenerateProperty(IPropertySymbol propertySymbol)
     {
         return propertySymbol.GetMethod != null
