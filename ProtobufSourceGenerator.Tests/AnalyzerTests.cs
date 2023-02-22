@@ -198,4 +198,23 @@ public partial class Entity
         test.ExpectedDiagnostics.Add(expected);
         await test.RunAsync();
     }
+
+    [Fact]
+    public async Task Enums_DoNotGenerateWarning()
+    {
+        string code = @"#nullable enable
+namespace Test;
+public enum MyEnum
+{
+    One,
+    Two
+}
+[ProtoBuf.ProtoContract]
+public partial class Entity
+{   
+    public MyEnum Value { get; set; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync();
+    }
 }

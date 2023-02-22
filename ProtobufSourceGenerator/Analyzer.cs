@@ -58,6 +58,9 @@ namespace ProtobufSourceGenerator
                 return;
             }
 
+            if (propertySymbol.Type.TypeKind == TypeKind.Enum)
+                return;
+
             if (propertySymbol.Type is not INamedTypeSymbol namedType || namedType.SpecialType != SpecialType.None)
                 return;
             bool hasProtoContract = HasProtoContractAttribute(namedType);
