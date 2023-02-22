@@ -29,5 +29,7 @@ public partial class CustomOrderedEntity
     [ProtoMember(1)]
     public int Id { get; set; }
 
-    public List<string?> Value { get; set; } = new();
+    public List<string>? Value { get; set; }
+
+    public Dictionary<int, string>? Dictionary { get; set; }
 }
