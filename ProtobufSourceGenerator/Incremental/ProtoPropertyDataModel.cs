@@ -10,6 +10,7 @@ public record struct ProtoPropertyDataModel
     {
         None,
         CollectionHelper,
+        CollactionAbstractionHelper,
         EnumerationHelper,
     }
 
@@ -21,8 +22,7 @@ public record struct ProtoPropertyDataModel
         GenertyTypeParameter = string.Empty;
         if (propertySymbol.Type is INamedTypeSymbol namedType && namedType.IsGenericType)
         {
-            if (kind == PropertyKind.EnumerationHelper)
-                GenertyTypeParameter = namedType.TypeArguments.First().ToString();
+            GenertyTypeParameter = namedType.TypeArguments.First().ToString();
         }
     }
 

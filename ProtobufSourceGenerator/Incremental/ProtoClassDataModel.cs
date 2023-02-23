@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
 namespace ProtobufSourceGenerator.Incremental;

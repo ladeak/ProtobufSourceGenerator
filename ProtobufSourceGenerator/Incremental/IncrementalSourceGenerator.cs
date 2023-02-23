@@ -56,7 +56,8 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
         }
         else if (IsCollectionType(namedType.OriginalDefinition))
         {
-            result.Add(new ProtoPropertyDataModel(propertySymbol, ProtoPropertyDataModel.PropertyKind.CollectionHelper));
+            var propertyKind = namedType.IsAbstract ? ProtoPropertyDataModel.PropertyKind.CollactionAbstractionHelper : ProtoPropertyDataModel.PropertyKind.CollectionHelper;
+            result.Add(new ProtoPropertyDataModel(propertySymbol, propertyKind));
         }
         return result;
     }
