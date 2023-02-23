@@ -9,8 +9,9 @@ public record struct ProtoPropertyDataModel
     public enum PropertyKind
     {
         None,
-        CollectionHelper,
-        CollactionAbstractionHelper,
+        ConcreteHelper,
+        AbstractionCollactionHelper,
+        AbstractionDictionaryHelper,
         EnumerationHelper,
     }
 
@@ -19,18 +20,24 @@ public record struct ProtoPropertyDataModel
         Kind = kind;
         PropertyIdentifier = propertySymbol.Name;
         PropertyTypeName = propertySymbol.Type.ToString();
-        GenertyTypeParameter = string.Empty;
+        GenertyTypeParameter0 = string.Empty;
+        IsInit = propertySymbol.SetMethod?.IsInitOnly ?? false;
         if (propertySymbol.Type is INamedTypeSymbol namedType && namedType.IsGenericType)
         {
-            GenertyTypeParameter = namedType.TypeArguments.First().ToString();
+            GenertyTypeParameter0 = namedType.TypeArguments.First().ToString();
+            GenertyTypeParameter1 = namedType.TypeArguments.Last().ToString();
         }
     }
+
+    public bool IsInit { get; }
 
     public string PropertyTypeName { get; }
 
     public string PropertyIdentifier { get; }
 
-    public string GenertyTypeParameter { get; }
+    public string GenertyTypeParameter0 { get; }
+
+    public string GenertyTypeParameter1 { get; }
 
     public PropertyKind Kind { get; }
 }

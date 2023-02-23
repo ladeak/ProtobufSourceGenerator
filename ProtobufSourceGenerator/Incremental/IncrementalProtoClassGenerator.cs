@@ -74,8 +74,9 @@ internal sealed class IncrementalProtoClassGenerator
     private PropertyDeclarationSyntax CreateSkeletonProperty(ProtoPropertyDataModel property) => property.Kind switch
     {
         ProtoPropertyDataModel.PropertyKind.None => CreateNormalSkeletonProperty(property),
-        ProtoPropertyDataModel.PropertyKind.CollactionAbstractionHelper => CreateHelperSkeletonProperty(property),
-        ProtoPropertyDataModel.PropertyKind.CollectionHelper => CreateHelperSkeletonProperty(property),
+        ProtoPropertyDataModel.PropertyKind.AbstractionCollactionHelper => CreateHelperSkeletonProperty(property),
+        ProtoPropertyDataModel.PropertyKind.AbstractionDictionaryHelper => CreateHelperSkeletonProperty(property),
+        ProtoPropertyDataModel.PropertyKind.ConcreteHelper => CreateHelperSkeletonProperty(property),
         ProtoPropertyDataModel.PropertyKind.EnumerationHelper => CreateHelperSkeletonProperty(property),
         _ => throw new InvalidOperationException("Proto property type kind supported"),
     };

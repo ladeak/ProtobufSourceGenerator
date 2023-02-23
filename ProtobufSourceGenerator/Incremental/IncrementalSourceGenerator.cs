@@ -56,11 +56,15 @@ public class IncrementalSourceGenerator : IIncrementalGenerator
         }
         else if (IsCollectionType(namedType.OriginalDefinition))
         {
-            var propertyKind = namedType.IsAbstract ? ProtoPropertyDataModel.PropertyKind.CollactionAbstractionHelper : ProtoPropertyDataModel.PropertyKind.CollectionHelper;
+            var propertyKind = ProtoPropertyDataModel.PropertyKind.ConcreteHelper;
+            if (namedType.IsAbstract)
+                propertyKind = IsDictionary(namedType) ? ProtoPropertyDataModel.PropertyKind.AbstractionDictionaryHelper : ProtoPropertyDataModel.PropertyKind.AbstractionCollactionHelper;
             result.Add(new ProtoPropertyDataModel(propertySymbol, propertyKind));
         }
         return result;
     }
+
+    private static bool IsDictionary(INamedTypeSymbol namedType) => namedType.MetadataName.EndsWith("Dictionary`2");
 
     private static bool IsCollectionType(INamedTypeSymbol originalNamedType)
     {
