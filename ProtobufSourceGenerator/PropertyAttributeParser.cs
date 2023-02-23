@@ -21,7 +21,7 @@ internal sealed class PropertyAttributeParser
     public static bool CanGenerateProperty(IPropertySymbol propertySymbol)
     {
         return propertySymbol.GetMethod != null
-                && propertySymbol.SetMethod != null && !propertySymbol.SetMethod.IsReadOnly && !propertySymbol.SetMethod.IsInitOnly
+                && propertySymbol.SetMethod != null && !propertySymbol.SetMethod.IsReadOnly
                 && !HasProtoProperties(propertySymbol, out _);
     }
 

@@ -93,8 +93,6 @@ public partial class Entity
     public int Id { get; init; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        DiagnosticResult expected = VerifyCS.Diagnostic("Proto03").WithLocation(5, 16).WithArguments(string.Empty);
-        test.ExpectedDiagnostics.Add(expected);
         await test.RunAsync();
     }
 

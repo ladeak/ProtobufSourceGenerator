@@ -198,30 +198,6 @@ public class Entity
     }
 
     [Fact]
-    public async Task InitOnlyProperties_DoNotGenerate()
-    {
-        var code = @"namespace Test;
-[ProtoBuf.ProtoContract]
-public partial class Entity
-{
-    public int Id { get; init; }
-}";
-
-        var test = new VerifyCS.Test
-        {
-            TestState =
-            {
-                Sources = { code },
-                GeneratedSources =
-                {
-                },
-            },
-        };
-
-        await test.RunAsync();
-    }
-
-    [Fact]
     public async Task NullabeReferenceTypesProperties()
     {
         var code = @"#nullable enable
