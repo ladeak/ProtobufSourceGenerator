@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace ProtobufSourceGenerator.Incremental;
@@ -22,12 +24,28 @@ public record struct ProtoPropertyDataModel
         PropertyTypeName = propertySymbol.Type.ToString();
         GenertyTypeParameter0 = string.Empty;
         IsInit = propertySymbol.SetMethod?.IsInitOnly ?? false;
+        CustomAttribute = string.Empty;
+        foreach (var attribute in propertySymbol.ContainingType.GetAttributes())
+        {
+            if (attribute.AttributeClass.Name == "GeneratorOptionsAttribute" && attribute.AttributeClass.ContainingNamespace.Name == "ProtobufSourceGenerator")
+            {
+                var argument = attribute.NamedArguments.FirstOrDefault(x => x.Key == nameof(GeneratorOptionsAttribute.PropertyAttributeType));
+                if (argument.Value.Type.Name == "Type" && argument.Value.Type.ContainingNamespace.Name == "System" && argument.Value.Value is INamedTypeSymbol namedTypeSymbol)
+                {
+                    CustomAttribute = namedTypeSymbol.ToString();
+                    break;
+                }
+            }
+        }
+
         if (propertySymbol.Type is INamedTypeSymbol namedType && namedType.IsGenericType)
         {
             GenertyTypeParameter0 = namedType.TypeArguments.First().ToString();
             GenertyTypeParameter1 = namedType.TypeArguments.Last().ToString();
         }
     }
+
+    public string CustomAttribute { get; set; }
 
     public bool IsInit { get; }
 

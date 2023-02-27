@@ -15,6 +15,7 @@ public static class CSharpIncrementalSourceGeneratorVerifier<TIncrementalGenerat
         public Test()
         {
             TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
+            TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(GeneratorOptionsAttribute).Assembly.Location));
             TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
         }
 

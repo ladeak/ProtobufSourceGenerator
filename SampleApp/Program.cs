@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using ProtobufSourceGenerator;
 using SampleApp;
 
 using var ms = new MemoryStream();
@@ -22,6 +23,7 @@ Console.WriteLine(aaaa.Data);
 
 [ProtoContract]
 [ProtoInclude(2, typeof(B))]
+[GeneratorOptions(PropertyAttributeType = typeof(ObsoleteAttribute))]
 public class A
 {
     [ProtoMember(1)]

@@ -91,12 +91,12 @@ namespace ProtobufSourceGenerator
 
         private static bool HasProtoContractAttribute(INamedTypeSymbol namedType)
         {
-            return namedType.GetAttributes().Any(x => x.AttributeClass.ToString() == "ProtoBuf.ProtoContractAttribute");
+            return namedType.GetAttributes().Any(x => x.AttributeClass.Name == "ProtoContractAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
         }
 
         private static bool HasProtoIncludeAttribute(INamedTypeSymbol namedType)
         {
-            return namedType.GetAttributes().Any(x => x.AttributeClass.ToString() == "ProtoBuf.ProtoIncludeAttribute");
+            return namedType.GetAttributes().Any(x => x.AttributeClass.Name == "ProtoIncludeAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
         }
 
         private bool IsPartial(INamedTypeSymbol namedType)
