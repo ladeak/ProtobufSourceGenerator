@@ -215,4 +215,82 @@ public partial class Entity
         var test = new AnalyzeCS() { TestCode = code };
         await test.RunAsync();
     }
+
+    [Fact]
+    public async Task BaseTypeNonGenerated_IssuesWarning()
+    {
+        string code = @"namespace Test;
+public class Base
+{
+    public int Value { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(7, 22).WithArguments(string.Empty);
+        test.ExpectedDiagnostics.Add(expected);
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task PartialBaseTypeNonGenerated_IssuesWarning()
+    {
+        string code = @"namespace Test;
+public partial class Base
+{
+    public int Value { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(7, 22).WithArguments(string.Empty);
+        test.ExpectedDiagnostics.Add(expected);
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task NoProtoIncludeBaseTypeNonGenerated_IssuesWarning()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class Base
+{
+    public int Value { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(8, 22).WithArguments(string.Empty);
+        test.ExpectedDiagnostics.Add(expected);
+        await test.RunAsync();
+    }
+
+
+    [Fact]
+    public async Task ProtoIncludeBaseTypeNonGenerated_IssuesWarning()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+[ProtoBuf.ProtoInclude(10, typeof(Derived))]
+public partial class Base
+{
+    public int Value { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync();
+    }
 }

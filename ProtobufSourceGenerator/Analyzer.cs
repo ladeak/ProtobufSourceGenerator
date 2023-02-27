@@ -14,8 +14,9 @@ namespace ProtobufSourceGenerator
         private static DiagnosticDescriptor Rule01 = new DiagnosticDescriptor("Proto01", "Type must be partial with ProtoContract attribute", "Type must be partial with ProtoContract attribute", Category, DiagnosticSeverity.Error, isEnabledByDefault: true, description: "Type must be partial with ProtoContract attribute.");
         private static DiagnosticDescriptor Rule02 = new DiagnosticDescriptor("Proto02", "Nested type's parent must be partial type", "Nested type's parent must be partial type", Category, DiagnosticSeverity.Error, isEnabledByDefault: true, description: "Nested type's parent must be partial type.");
         private static DiagnosticDescriptor Rule03 = new DiagnosticDescriptor("Proto03", "Consider attributing property with ProtoMember", "Consider attributing property with ProtoMember", Category, DiagnosticSeverity.Info, isEnabledByDefault: true, description: "This property is not considered for ProtoBuf source generation. Consider manually marking the type with ProtoIgnore or ProtoMember attributes.");
+        private static DiagnosticDescriptor Rule04 = new DiagnosticDescriptor("Proto04", "Consider attributing base type with ProtoContract, ProtoInclude as a partial class", "Consider attributing base type with ProtoContract, ProtoInclude", Category, DiagnosticSeverity.Info, isEnabledByDefault: true, description: "Consider attributing base type with ProtoContract, ProtoInclude and amend to a partial class.");
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule01, Rule02, Rule03); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule01, Rule02, Rule03, Rule04); } }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -27,10 +28,25 @@ namespace ProtobufSourceGenerator
 
         private void AnalyzeTypeHierarchy(SymbolAnalysisContext context)
         {
-            if (context.Symbol is not INamedTypeSymbol typeSymbol)
+            if (context.Symbol is not INamedTypeSymbol analyzedTypeSymbol)
                 return;
 
-            typeSymbol = typeSymbol.ContainingType;
+            var typeSymbol = analyzedTypeSymbol.BaseType;
+            while (typeSymbol.SpecialType != SpecialType.System_Object
+                && typeSymbol.SpecialType != SpecialType.System_Enum
+                && typeSymbol.SpecialType != SpecialType.System_ValueType)
+            {
+                if (!IsPartial(typeSymbol)
+                    || !HasProtoContractAttribute(typeSymbol)
+                    || !HasProtoIncludeAttribute(typeSymbol))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule04, context.Symbol.Locations.First(), string.Empty));
+                    return;
+                }
+                typeSymbol = typeSymbol.BaseType;
+            }
+
+            typeSymbol = analyzedTypeSymbol.ContainingType;
             while (typeSymbol != null)
             {
                 if (!IsPartial(typeSymbol))
@@ -75,7 +91,12 @@ namespace ProtobufSourceGenerator
 
         private static bool HasProtoContractAttribute(INamedTypeSymbol namedType)
         {
-            return namedType.GetAttributes().Any(x => x.AttributeConstructor.ToString() != "ProtoBuf.ProtoContractAttribute");
+            return namedType.GetAttributes().Any(x => x.AttributeClass.ToString() == "ProtoBuf.ProtoContractAttribute");
+        }
+
+        private static bool HasProtoIncludeAttribute(INamedTypeSymbol namedType)
+        {
+            return namedType.GetAttributes().Any(x => x.AttributeClass.ToString() == "ProtoBuf.ProtoIncludeAttribute");
         }
 
         private bool IsPartial(INamedTypeSymbol namedType)
