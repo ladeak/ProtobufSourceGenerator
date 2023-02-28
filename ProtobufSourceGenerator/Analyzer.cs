@@ -28,25 +28,35 @@ namespace ProtobufSourceGenerator
 
         private void AnalyzeTypeHierarchy(SymbolAnalysisContext context)
         {
-            if (context.Symbol is not INamedTypeSymbol analyzedTypeSymbol)
+            if (context.Symbol is not INamedTypeSymbol namedType)
                 return;
 
-            var typeSymbol = analyzedTypeSymbol.BaseType;
+            ValidateBaseTypes(context, namedType);
+            ValidateNestedTypes(context, namedType);
+        }
+
+        private void ValidateBaseTypes(SymbolAnalysisContext context, INamedTypeSymbol namedType)
+        {
+            if (!IsPartial(namedType) || !HasProtoContractAttribute(namedType))
+                return;
+
+            var typeSymbol = namedType.BaseType;
             while (typeSymbol.SpecialType != SpecialType.System_Object
                 && typeSymbol.SpecialType != SpecialType.System_Enum
                 && typeSymbol.SpecialType != SpecialType.System_ValueType)
             {
-                if (!IsPartial(typeSymbol)
-                    || !HasProtoContractAttribute(typeSymbol)
-                    || !HasProtoIncludeAttribute(typeSymbol))
+                if (!HasProtoContractAttribute(typeSymbol) || !HasProtoIncludeAttribute(typeSymbol, namedType))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Rule04, context.Symbol.Locations.First(), string.Empty));
                     return;
                 }
                 typeSymbol = typeSymbol.BaseType;
             }
+        }
 
-            typeSymbol = analyzedTypeSymbol.ContainingType;
+        private void ValidateNestedTypes(SymbolAnalysisContext context, INamedTypeSymbol namedType)
+        {
+            var typeSymbol = namedType.ContainingType;
             while (typeSymbol != null)
             {
                 if (!IsPartial(typeSymbol))
@@ -94,9 +104,23 @@ namespace ProtobufSourceGenerator
             return namedType.GetAttributes().Any(x => x.AttributeClass.Name == "ProtoContractAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
         }
 
-        private static bool HasProtoIncludeAttribute(INamedTypeSymbol namedType)
+        private static bool HasProtoIncludeAttribute(INamedTypeSymbol namedType, INamedTypeSymbol matchingType)
         {
-            return namedType.GetAttributes().Any(x => x.AttributeClass.Name == "ProtoIncludeAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
+            var protoIncludeAttribute = namedType.GetAttributes().FirstOrDefault(x => x.AttributeClass.Name == "ProtoIncludeAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
+            if (protoIncludeAttribute is null)
+                return false;
+
+            var matchingTypeFound = protoIncludeAttribute.ConstructorArguments.Any(x => x.Type.Name == "Type"
+               && x.Type.ContainingNamespace.Name == "System"
+               && x.Value is INamedTypeSymbol knownType
+               && knownType.Equals(matchingType, SymbolEqualityComparer.Default));
+            if (matchingTypeFound)
+                return true;
+
+            return protoIncludeAttribute.ConstructorArguments.Any(x => x.Type.Name == "String"
+               && x.Type.ContainingNamespace.Name == "System"
+               && x.Value is string knownType
+               && knownType == matchingType.ToString());
         }
 
         private bool IsPartial(INamedTypeSymbol namedType)

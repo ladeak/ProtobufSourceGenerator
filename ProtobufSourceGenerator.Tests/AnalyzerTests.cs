@@ -274,9 +274,8 @@ public partial class Derived : Base
         await test.RunAsync();
     }
 
-
     [Fact]
-    public async Task ProtoIncludeBaseTypeNonGenerated_IssuesWarning()
+    public async Task ProtoIncludeBaseTypeNonGenerated_NoWarning()
     {
         string code = @"namespace Test;
 [ProtoBuf.ProtoContract]
@@ -284,6 +283,114 @@ public partial class Derived : Base
 public partial class Base
 {
     public int Value { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task NonGeneratingDerived_BaseType_NoWarning()
+    {
+        string code = @"namespace Test;
+public class Base
+{
+    public int Value { get; set; }
+}
+public class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task ProtoIncludeNotPartial_BaseType_NoWarning()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+[ProtoBuf.ProtoInclude(10, typeof(Derived))]
+public class Base
+{
+    public int Value { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task ProtoInclude_NotMatchingDerivedType_Warning()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+[ProtoBuf.ProtoInclude(10, typeof(SomeOther))]
+public class Base
+{
+    public int Value { get; set; }
+}
+public class SomeOther : Base
+{
+    public int Data { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(13, 22).WithArguments(string.Empty);
+        test.ExpectedDiagnostics.Add(expected);
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task ProtoInclude_NotMatchingDerivedTypeString_Warning()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+[ProtoBuf.ProtoInclude(10, ""Test.SomeOther"")]
+public class Base
+{
+    public int Value { get; set; }
+}
+public class SomeOther : Base
+{
+    public int Data { get; set; }
+}
+[ProtoBuf.ProtoContract]
+public partial class Derived : Base
+{   
+    public int Id { get; init; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(13, 22).WithArguments(string.Empty);
+        test.ExpectedDiagnostics.Add(expected);
+        await test.RunAsync();
+    }
+
+    [Fact]
+    public async Task ProtoInclude_MatchingDerivedTypeString_NoWarning()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+[ProtoBuf.ProtoInclude(10, ""Test.Derived"")]
+public class Base
+{
+    public int Value { get; set; }
+}
+public class SomeOther : Base
+{
+    public int Data { get; set; }
 }
 [ProtoBuf.ProtoContract]
 public partial class Derived : Base
