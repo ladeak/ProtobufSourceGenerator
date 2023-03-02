@@ -68,4 +68,75 @@ The source generator also comes with an analyzer helping source generation:
 - issues an error if a custom type of a property is not participating in source generation
 - issues an error if a source generated nested type's parent is not partial
 - issues an info if a property is not part of source generation
+- issues a warning when the base type is not attributed for serialization
+
+## Advanced Usage
+
+### Null Items in Collections
+
+Serializing null values by protobuf-net is not allowed:
+
+```csharp
+new List<string>() { "one", null, "three" };
+```
+
+The generator will not remove null items, so in this case an exception shall be handled by the user code.
+
+### Empty Collections
+
+```csharp
+public List<string> Value { get; set; }
+```
+
+Empty lists are not distinguished by the proto contract from a null lists. protobuf-net suggests to have an additional `bool` property indicating if the list was empty at serialization or not, and based on the value instantiate a collection at deserialization or not.
+
+ProtoBufGenearator generates the helper property such as:
+
+```csharp
+[global::ProtoBuf.ProtoMember(1)]
+private System.Collections.Generic.List<string> ProtoValue { get => Value; set => Value = value; }
+
+[global::ProtoBuf.ProtoMember(2)]
+[global::System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute]
+private bool ProtoIsEmptyValue
+{
+    get => ProtoValue?.Count == 0;
+    set
+    {
+        if (value)
+            ProtoValue = new();
+    }
+}
+```
+
+### Initialized to Enumerable Empty
+
+```csharp
+public IEnumerable<string> Values { get; set; } = Enumerable.Empty<string>();
+```
+
+Collections when initialized with enumerable empty cause an issue with deserialization as protobuf-net will attempt to add an item to the existing collection, which is not possible in the above case.
+
+In this case the user may initialze with an empty list, or manually decorate the property with `[ProtoMember()]` (or `[ProtoIgnore]`) attribute that will exclude it from protobuf source generation.
+
+### Custom Attributes on Properties
+
+It is supported to decorate all properties in the generated partial class with custom attributes.
+
+```csharp
+[ProtoContract]
+[GeneratorOptions(PropertyAttributeType = typeof(NotMappedAttribute))]
+public partial class CustomAttributedEntity
+{
+    // ...
+}
+```
+
+In the above example, with the type parameter of `GeneratorOptions` the generator is instructed to apply `NotMappedAttribute` attribute on all generated properties on a class.
+
+For a more fine grained approach consider excluding the given property from the source generation. For such cases use `[ProtoMember()]` or `[ProtoIgnore]` attributes.
+
+### Base Classes and Inheritance
+
+Follow the instructions of protobuf-net library. Apply `[ProtoInclude(...)]` attribute on the type definition.
 
