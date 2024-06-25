@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.Testing;
-using AnalyzeCS = ProtobufSourceGenerator.Tests.AnalyzerFixure<ProtobufSourceGenerator.Analyzer, Microsoft.CodeAnalysis.Testing.Verifiers.XUnitVerifier>;
-using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<ProtobufSourceGenerator.Analyzer, Microsoft.CodeAnalysis.Testing.Verifiers.XUnitVerifier>;
+using AnalyzeCS = ProtobufSourceGenerator.Tests.AnalyzerFixure<ProtobufSourceGenerator.Analyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<ProtobufSourceGenerator.Analyzer, Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace ProtobufSourceGenerator.Tests;
 

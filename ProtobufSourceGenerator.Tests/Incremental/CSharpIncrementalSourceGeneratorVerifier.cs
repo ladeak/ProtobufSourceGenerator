@@ -3,14 +3,13 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
 using ProtoBuf;
 
 namespace ProtobufSourceGenerator.Tests.Incremental;
 
 public static class CSharpIncrementalSourceGeneratorVerifier<TIncrementalGenerator> where TIncrementalGenerator : IIncrementalGenerator, new()
 {
-    public class Test : CSharpSourceGeneratorTest<EmptySourceGeneratorProvider, XUnitVerifier>
+    public class Test : CSharpSourceGeneratorTest<EmptySourceGeneratorProvider, DefaultVerifier>
     {
         public Test()
         {
@@ -28,10 +27,7 @@ public static class CSharpIncrementalSourceGeneratorVerifier<TIncrementalGenerat
 
         public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.Default;
 
-        protected override IEnumerable<ISourceGenerator> GetSourceGenerators()
-        {
-            return new[] { new TIncrementalGenerator().AsSourceGenerator() };
-        }
+        protected override IEnumerable<Type> GetSourceGenerators() => [typeof(TIncrementalGenerator)];
 
         private static ImmutableDictionary<string, ReportDiagnostic> GetNullableWarningsFromCompiler()
         {
