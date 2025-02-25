@@ -14,7 +14,7 @@ public static class CSharpSourceGeneratorVerifier<TSourceGenerator> where TSourc
         public Test()
         {
             TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(ProtoContractAttribute).Assembly.Location));
-            TestState.ReferenceAssemblies = new ReferenceAssemblies("net7.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "7.0.0"), Path.Combine("ref", "net7.0"));
+            TestState.ReferenceAssemblies = new ReferenceAssemblies("net9.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "9.0.0"), Path.Combine("ref", "net9.0"));
         }
 
         protected override CompilationOptions CreateCompilationOptions()
