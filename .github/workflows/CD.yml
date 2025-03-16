@@ -20,11 +20,11 @@ jobs:
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Build
-      run: dotnet build ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
+      run: dotnet build ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
     - name: Test
       run: dotnet test
     - name: Pack
-      run: dotnet pack ProtobufSourceGenerator.sln --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
+      run: dotnet pack ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
     - name: Push Nuget
       run: dotnet nuget push **/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $nuget_api_key --skip-duplicate
       env:

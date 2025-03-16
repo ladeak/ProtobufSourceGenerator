@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ProtobufSourceGenerator.Tests/ProtobufSourceGenerator.Tests.csproj" />
+  <Project Path="ProtobufSourceGenerator/ProtobufSourceGenerator.csproj" />
+  <Project Path="SampleApp/SampleApp.csproj" />
+</Solution>
