@@ -18,4 +18,4 @@ jobs:
     - name: Build
       run: dotnet build ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }}
     - name: Test
-      run: dotnet test ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }}
+      run: dotnet test --solution ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }}
