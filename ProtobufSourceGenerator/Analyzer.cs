@@ -56,6 +56,11 @@ namespace ProtobufSourceGenerator
 
         private void ValidateNestedTypes(SymbolAnalysisContext context, INamedTypeSymbol namedType)
         {
+            if (!HasProtoContractAttribute(namedType))
+            {
+                return; // Issue #59: We're not being asked to generate this type so the parent being non-partial is irrelevant
+            }
+            
             var typeSymbol = namedType.ContainingType;
             while (typeSymbol != null)
             {

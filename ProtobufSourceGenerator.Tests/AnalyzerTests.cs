@@ -95,6 +95,18 @@ public partial class Entity
         var test = new AnalyzeCS() { TestCode = code };
         await test.RunAsync();
     }
+    
+    [Fact]
+    public async Task NoInfo_ForNonGeneratingNestedType_Issue59()
+    {
+        string code = @"namespace Test;
+public class Foo
+{   
+    public class Bar {}
+}";
+        var test = new AnalyzeCS { TestCode = code };
+        await test.RunAsync(TestContext.Current.CancellationToken);
+    }
 
     [Fact]
     public async Task InfoIgnore_ForNonGeneratingProperty()
