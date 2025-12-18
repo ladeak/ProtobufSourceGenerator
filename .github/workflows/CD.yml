@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
     - name: Test
-      run: dotnet test --solution ProtobufSourceGenerator.slnx
+      run: dotnet test --solution ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }}
     - name: Pack
       run: dotnet pack ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
     - name: Push Nuget
