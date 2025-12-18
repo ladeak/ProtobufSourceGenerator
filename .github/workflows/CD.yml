@@ -23,9 +23,14 @@ jobs:
       run: dotnet build ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
     - name: Test
       run: dotnet test --solution ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }}
+    - name: Trusted Publishing Auth
+      uses: NuGet/login@v1
+      id: trustedpublish
+      with:
+        user: ${{ secrets.NUGET_USER }}
     - name: Pack
       run: dotnet pack ProtobufSourceGenerator.slnx --configuration ${{ env.CONFIGURATION }} -p:Version=${VERSION}
     - name: Push Nuget
-      run: dotnet nuget push **/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $nuget_api_key --skip-duplicate
+      run: dotnet nuget push **/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key "${{ steps.trustedpublish.outputs.NUGET_API_KEY }}" --skip-duplicate
       env:
         nuget_api_key: ${{ secrets.NUGET_API_KEY }}
