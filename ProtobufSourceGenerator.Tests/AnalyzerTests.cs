@@ -420,7 +420,7 @@ public partial class Derived : Base
 [ProtoBuf.ProtoContract]
 public partial class SomeEntity
 {
-    public List<int>? Value { get; set; }
+    public System.Collections.Generic.List<int>? Value { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
         await test.RunAsync(TestContext.Current.CancellationToken);

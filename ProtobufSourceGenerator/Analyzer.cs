@@ -60,7 +60,7 @@ namespace ProtobufSourceGenerator
             {
                 return; // Issue #59: We're not being asked to generate this type so the parent being non-partial is irrelevant
             }
-            
+
             var typeSymbol = namedType.ContainingType;
             while (typeSymbol != null)
             {
@@ -92,22 +92,28 @@ namespace ProtobufSourceGenerator
             if (propertySymbol.Type.TypeKind == TypeKind.Enum)
                 return;
 
-            if (propertySymbol.Type is not INamedTypeSymbol namedType || namedType.SpecialType != SpecialType.None)
-                return;
-            bool hasProtoContract = HasProtoContractAttribute(namedType);
-            bool isPartial = IsPartial(namedType);
-
-            if (hasProtoContract && isPartial)
+            if (!IsValidType(propertySymbol))
                 return;
 
             var diagnostic = Diagnostic.Create(Rule01, context.Symbol.Locations.First(), string.Empty);
             context.ReportDiagnostic(diagnostic);
         }
 
-        private static bool HasProtoContractAttribute(INamedTypeSymbol namedType)
+        private bool IsValidType(IPropertySymbol propertySymbol)
         {
-            return namedType.GetAttributes().Any(x => x.AttributeClass.Name == "ProtoContractAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
+            if (propertySymbol.Type is not INamedTypeSymbol namedType || namedType.SpecialType != SpecialType.None)
+                return false;
+            bool hasProtoContract = HasProtoContractAttribute(namedType);
+            if (namedType.DeclaringSyntaxReferences == null || namedType.DeclaringSyntaxReferences.Length == 0)
+                return false;
+            bool isPartial = IsPartial(namedType);
+            if (hasProtoContract && isPartial)
+                return false;
+            return true;
         }
+
+        private static bool HasProtoContractAttribute(INamedTypeSymbol namedType) =>
+            namedType.GetAttributes().Any(x => x.AttributeClass.Name == "ProtoContractAttribute" && x.AttributeClass.ContainingNamespace.Name == "ProtoBuf");
 
         private static bool HasProtoIncludeAttribute(INamedTypeSymbol namedType, INamedTypeSymbol matchingType)
         {
