@@ -9,10 +9,16 @@ internal sealed class PropertyAttributeParser
 {
     public static bool CanGenerateAutoProperty(IPropertySymbol propertySymbol, CancellationToken token = default)
     {
-        if (propertySymbol.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax(token) is PropertyDeclarationSyntax propertySyntax
+        var syntax = propertySymbol.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax(token);
+        if (syntax is PropertyDeclarationSyntax propertySyntax
                        && propertySyntax.AccessorList != null
                        && propertySyntax.AccessorList.Accessors.All(x => x.Body == null && x.ExpressionBody == null))
         {
+            return PropertyAttributeParser.CanGenerateProperty(propertySymbol);
+        }
+        else if (syntax is ParameterSyntax parameter)
+        {
+            // Handle generated properties (e.g., from records)
             return PropertyAttributeParser.CanGenerateProperty(propertySymbol);
         }
         return false;
