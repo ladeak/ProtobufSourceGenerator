@@ -23,7 +23,7 @@ public partial class Entity
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto01").WithLocation(10, 23).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public partial class Entity
     public SomeEntity Id { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public partial class Entity
     public SomeEntity Id { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public partial class Entity
     public SomeEntity Id { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public partial class Entity
     public int Id { get; init; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public partial class ParentEntity
     }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class ParentEntity
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto02").WithLocation(7, 26).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public partial class Entity
     public int Id { get; init; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public partial class Entity
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto03").WithLocation(7, 16).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public partial class Entity
     public MyEnum Value { get; set; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public partial class Derived : Base
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(7, 22).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -263,7 +263,7 @@ public partial class Derived : Base
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(7, 22).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -283,7 +283,7 @@ public partial class Derived : Base
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(8, 22).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -318,7 +318,7 @@ public class Derived : Base
     public int Id { get; init; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -337,7 +337,7 @@ public partial class Derived : Base
     public int Id { get; init; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -362,7 +362,7 @@ public partial class Derived : Base
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(13, 22).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -387,7 +387,7 @@ public partial class Derived : Base
         var test = new AnalyzeCS() { TestCode = code };
         DiagnosticResult expected = VerifyCS.Diagnostic("Proto04").WithLocation(13, 22).WithArguments(string.Empty);
         test.ExpectedDiagnostics.Add(expected);
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -410,6 +410,19 @@ public partial class Derived : Base
     public int Id { get; init; }
 }";
         var test = new AnalyzeCS() { TestCode = code };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task ListDictionary_ShouldNotThrow()
+    {
+        string code = @"namespace Test;
+[ProtoBuf.ProtoContract]
+public partial class SomeEntity
+{
+    public List<int>? Value { get; set; }
+}";
+        var test = new AnalyzeCS() { TestCode = code };
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 }
