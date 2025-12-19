@@ -33,3 +33,6 @@ public partial class CustomOrderedEntity
 
     public Dictionary<int, string>? Dictionary { get; set; }
 }
+
+[ProtoContract(SkipConstructor = true)]
+public partial record MyRecord(int Id, string Value);

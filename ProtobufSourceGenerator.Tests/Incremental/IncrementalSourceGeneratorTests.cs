@@ -40,7 +40,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -175,7 +175,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -205,7 +205,7 @@ public class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -238,7 +238,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -274,7 +274,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -321,7 +321,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -368,7 +368,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -404,7 +404,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -429,7 +429,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -454,7 +454,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -492,7 +492,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -526,7 +526,7 @@ public partial record class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -560,7 +560,7 @@ public partial struct Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -591,7 +591,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -624,7 +624,7 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -671,7 +671,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -718,7 +718,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -765,7 +765,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -812,7 +812,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -858,7 +858,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -904,7 +904,7 @@ public partial class Entity
             },
         };
 
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -939,6 +939,39 @@ public partial class Entity
                 },
             },
         };
-        await test.RunAsync();
+        await test.RunAsync(TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task PositionalRecordTypes()
+    {
+        var code = @"namespace Test;
+[ProtoBuf.ProtoContract(SkipConstructor =  true)]
+public partial record class Entity(int Id, string Value);";
+
+        var generated = @"// <auto-generated/>
+#nullable enable
+namespace Test;
+[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute]
+public partial record class Entity
+{
+    [global::ProtoBuf.ProtoMember(1)]
+    private int ProtoId { get => Id; init => Id = value; }
+
+    [global::ProtoBuf.ProtoMember(2)]
+    private string ProtoValue { get => Value; init => Value = value; }
+}";
+        var test = new VerifyCS.Test
+        {
+            TestState =
+            {
+                Sources = { code },
+                GeneratedSources =
+                {
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                },
+            },
+        };
+        await test.RunAsync(TestContext.Current.CancellationToken);
     }
 }
