@@ -36,7 +36,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -75,7 +75,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -115,7 +115,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -169,8 +169,8 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generatedEntity.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
-                    (typeof(IncrementalSourceGenerator), "ProtoSomeEntity.g.cs", SourceText.From(generatedSomeEntity.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generatedEntity.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
+                    (typeof(IncrementalSourceGenerator), "ProtoSomeEntity.g.cs", SourceText.From(generatedSomeEntity.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -234,7 +234,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -269,7 +269,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -316,7 +316,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -363,7 +363,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -399,7 +399,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -488,7 +488,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -522,7 +522,7 @@ public partial record class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -556,7 +556,7 @@ public partial struct Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -587,7 +587,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -620,7 +620,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -666,7 +666,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -713,7 +713,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -760,7 +760,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -807,7 +807,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -853,7 +853,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -899,7 +899,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -935,7 +935,7 @@ public partial class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
@@ -968,7 +968,7 @@ public partial record class Entity
                 Sources = { code },
                 GeneratedSources =
                 {
-                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha1)),
+                    (typeof(IncrementalSourceGenerator), "ProtoEntity.g.cs", SourceText.From(generated.ReplaceLineEndings(CRLF), Encoding.UTF8, SourceHashAlgorithm.Sha256)),
                 },
             },
         };
